@@ -1,1 +1,3 @@
 fastapi[standard]
+psycopg
+psycopg-binary
