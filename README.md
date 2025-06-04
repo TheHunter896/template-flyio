@@ -21,3 +21,15 @@ fly secrets set DB_CONNECTION_STRING={} --app {another_app_name}
 ```shell
 fly deploy
 ```
+
+## Connection to database
+You can use to execute SQL in the PSQL console
+```shell
+fly postgres connect --app {postgres-app-name}
+```
+
+If you want to connect via IDE, port forward the database to your localhost
+```shell
+fly proxy 5432 -a {postgres-app-name}
+```
+As long as this process is active you can connect via your IDE (datagrip, dbeaver, pycharm...)
