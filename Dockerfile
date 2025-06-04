@@ -1,16 +1,23 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.12.10-alpine3.22 AS builder
 
-WORKDIR /server
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
 
 # Install system dependencies and Python dependencies
-COPY requirements.txt /server/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir uvicorn
+COPY requirements.txt /app/requirements.txt
 
-# Copy project
-COPY . /server/
+RUN pip wheel --no-cache-dir --only-binary :all: -w /app/wheel -r requirements.txt
 
-# Expose the port the app runs in
+FROM python:3.12-alpine3.22 AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app/wheel /app/wheel
+COPY main.py .
+RUN pip install --no-cache-dir /app/wheel/*
 EXPOSE 8000
 
 # Define the command to start the container
